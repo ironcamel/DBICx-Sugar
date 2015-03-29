@@ -10,13 +10,12 @@ version 0.0001
 
     use DBICx::Sugar qw(schema resultset rset);
 
-    my $user = schema('default')->resultset('User')->find(param 'user_id');
+    # all of the following are equivalent:
 
-    # If you are accessing the 'default' schema, then all the following
-    # are equivalent to the above:
-    $user = schema->resultset('User')->find(param 'user_id');
-    $user = resultset('User')->find(param 'user_id');
-    $user = rset('User')->find(param 'user_id');
+    $user = schema('default')->resultset('User')->find('bob');
+    $user = schema->resultset('User')->find('bob');
+    $user = resultset('User')->find('bob');
+    $user = rset('User')->find('bob');
 
 # DESCRIPTION
 
