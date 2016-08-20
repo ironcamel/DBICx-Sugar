@@ -30,7 +30,7 @@ sub config {
     } else {
         croak "could not find a config.yml or config.yaml file";
     }
-    return LoadFile($config_path)->{dbicx_sugar};
+    return $_config = LoadFile($config_path)->{dbicx_sugar};
 }
 
 sub schema {
