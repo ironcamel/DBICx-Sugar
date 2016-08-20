@@ -9,7 +9,7 @@ use YAML qw(LoadFile);
 
 # VERSION
 
-our @EXPORT_OK = qw(config get_config rset resultset schema);
+our @EXPORT_OK = qw(config get_config add_schema_to_config rset resultset schema);
 
 my $_config;
 my $_schemas = {};
@@ -33,6 +33,15 @@ sub config {
 }
 
 sub get_config { return $_config; }
+
+sub add_schema_to_config {
+    my ($schema_name, $schema_data) = @_;
+    croak "Schema name $schema_name already exists"
+        if exists $_config->{$schema_name};
+    croak "Schema data must be a hashref (schema name: $schema_name)"
+        unless 'HASH' eq ref $schema_data;
+    $_config->{$schema_name} = $schema_data;
+}
 
 sub schema {
     my ($name) = @_;
@@ -303,6 +312,16 @@ but does not look for a config file.
 Use this for introspection, eg:
 
     my $dbix_sugar_is_configured = get_config ? 1 : 0 ;
+
+=head2 add_schema_to_config
+
+This function does not touch the existing config.
+It can be used if some other part of your app
+has configured DBICx::Sugar but did not know about
+the part that uses an extra schema.
+
+    add_schema_to_config('schema_name', { dsn => ... });
+
 
 =head1 SCHEMA GENERATION
 
