@@ -4,13 +4,12 @@ use strict;
 use warnings;
 use Carp qw(croak);
 use Exporter qw(import);
-use Memoize qw(memoize);
 use Module::Load;
 use YAML qw(LoadFile);
 
 # VERSION
 
-our @EXPORT_OK = qw(config rset resultset schema);
+our @EXPORT_OK = qw(config get_config rset resultset schema);
 
 my $_config;
 my $_schemas = {};
@@ -32,6 +31,8 @@ sub config {
     }
     return $_config = LoadFile($config_path)->{dbicx_sugar};
 }
+
+sub get_config { return $_config; }
 
 sub schema {
     my ($name) = @_;
@@ -293,6 +294,15 @@ is equivalent to:
     my $user = rset('User')->find('bob');
 
 This is simply an alias for C<resultset>.
+
+=head2 get_config
+
+Returns the current configuration, like config does,
+but does not look for a config file.
+
+Use this for introspection, eg:
+
+    my $dbix_sugar_is_configured = get_config ? 1 : 0 ;
 
 =head1 SCHEMA GENERATION
 
