@@ -336,6 +336,16 @@ from the root of your project directory:
 
 For this example, your C<schema_class> setting would be C<'Foo::Schema'>.
 
+=head1 CONTRIBUTORS
+
+=over
+
+=item *
+
+Henk van Oers <L<https://github.com/hvoers>>
+
+=back
+
 =cut
 
 1;

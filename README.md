@@ -4,7 +4,7 @@ DBICx::Sugar - Just some syntax sugar for DBIx::Class
 
 # VERSION
 
-version 0.0001
+version 0.0100
 
 # SYNOPSIS
 
@@ -192,6 +192,24 @@ is equivalent to:
 
 This is simply an alias for `resultset`.
 
+## get\_config
+
+Returns the current configuration, like config does,
+but does not look for a config file.
+
+Use this for introspection, eg:
+
+    my $dbix_sugar_is_configured = get_config ? 1 : 0 ;
+
+## add\_schema\_to\_config
+
+This function does not touch the existing config.
+It can be used if some other part of your app
+has configured DBICx::Sugar but did not know about
+the part that uses an extra schema.
+
+    add_schema_to_config('schema_name', { dsn => ... });
+
 # SCHEMA GENERATION
 
 Setting the schema\_class option and having proper DBIx::Class classes
@@ -204,6 +222,10 @@ from the root of your project directory:
     dbicdump -o dump_directory=./lib Foo::Schema dbi:SQLite:/path/to/foo.db
 
 For this example, your `schema_class` setting would be `'Foo::Schema'`.
+
+# CONTRIBUTORS
+
+- Henk van Oers <[https://github.com/hvoers](https://github.com/hvoers)>
 
 # AUTHOR
 
