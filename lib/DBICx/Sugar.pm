@@ -56,11 +56,11 @@ sub schema {
         $name = @names == 1 ? $names[0] : 'default';
     }
 
-    # Return existing schemas, either by name
-    return $_schemas->{$name} if $_schemas->{$name};
-
     my $options = $cfg->{$name}
         or croak("The schema $name is not configured");
+
+    # Return existing schemas, either by name
+    return $_schemas->{$name} if $_schemas->{$name};
 
     # Or by alias
     if ( my $alias = $options->{alias} ) {
