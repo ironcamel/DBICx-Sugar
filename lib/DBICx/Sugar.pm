@@ -47,14 +47,13 @@ sub schema {
     my ($name) = @_;
     my $cfg = config();
 
+    # We weren't asked for a specific name
     if (not defined $name) {
-        if (keys %$cfg == 1) {
-            ($name) = keys %$cfg;
-        } elsif (keys %$cfg) {
-            $name = "default";
-        } else {
-            die "No schemas are configured";
-        }
+        my @names = keys %{$cfg}
+            or die "No schemas are configured";
+
+        # Either pick the only one in the config or the default
+        $name = @names == 1 ? $names[0] : 'default';
     }
 
     return $_schemas->{$name} if $_schemas->{$name};
