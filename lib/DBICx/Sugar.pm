@@ -96,11 +96,9 @@ sub schema {
             $schema = $schema_class->connect( @conn_info );
         }
     } else {
-        my $dbic_loader = 'DBIx::Class::Schema::Loader';
-        eval { load $dbic_loader };
-        croak("You must provide a schema_class option or install $dbic_loader.")
-            if $@;
-        $dbic_loader->naming( $options->{schema_loader_naming} || 'v7' );
+        eval { require DBIx::Class::Schema::Loader; 1; }
+            or croak("You must provide a schema_class option or install DBIx::Class::Schema::Loader.");
+        DBIx::Class::Schema::Loader->naming( $options->{schema_loader_naming} || 'v7' );
         $schema = DBIx::Class::Schema::Loader->connect(@conn_info);
     }
 
