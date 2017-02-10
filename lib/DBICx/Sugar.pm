@@ -44,10 +44,12 @@ sub add_schema_to_config {
 }
 
 sub schema {
-    my ($name) = @_;
+    my ( $name, $schema_cfg ) = @_;
+
     my $cfg = config();
 
     # We weren't asked for a specific name
+    # try to get one from the default config
     if (not defined $name) {
         my @names = keys %{$cfg}
             or croak("No schemas are configured");
@@ -58,6 +60,12 @@ sub schema {
 
     my $options = $cfg->{$name}
         or croak("The schema $name is not configured");
+
+    # Schema specific configuration from the user
+    if ($schema_cfg) {
+        # Just return a new schema and do not save it
+        return _create_schema( $name, $schema_cfg );
+    }
 
     # Return existing schemas, either by name
     return $_schemas->{$name} if $_schemas->{$name};
