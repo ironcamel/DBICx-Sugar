@@ -23,7 +23,7 @@ sub config {
     return $_config if $_config;
     my $config_path;
     if (-f 'config.yaml') {
-        $config_path = 'config.yaml'
+        $config_path = 'config.yaml';
     } elsif (-f 'config.yml') {
         $config_path = 'config.yml';
     } else {
@@ -104,14 +104,14 @@ sub schema {
     }
 
     return $_schemas->{$name} = $schema;
-};
+}
 
 sub resultset {
     my ($rset_name) = @_;
     return schema()->resultset($rset_name);
 }
 
-sub rset { goto &resultset };
+sub rset { goto &resultset }
 
 # ABSTRACT: Just some syntax sugar for DBIx::Class
 
