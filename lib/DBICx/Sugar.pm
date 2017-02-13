@@ -23,7 +23,7 @@ sub config {
     return $_config if $_config;
     my $config_path;
     if (-f 'config.yaml') {
-        $config_path = 'config.yaml'
+        $config_path = 'config.yaml';
     } elsif (-f 'config.yml') {
         $config_path = 'config.yml';
     } else {
@@ -47,22 +47,23 @@ sub schema {
     my ($name) = @_;
     my $cfg = config();
 
+    # We weren't asked for a specific name
     if (not defined $name) {
-        if (keys %$cfg == 1) {
-            ($name) = keys %$cfg;
-        } elsif (keys %$cfg) {
-            $name = "default";
-        } else {
-            die "No schemas are configured";
-        }
+        my @names = keys %{$cfg}
+            or croak("No schemas are configured");
+
+        # Either pick the only one in the config or the default
+        $name = @names == 1 ? $names[0] : 'default';
     }
 
     return $_schemas->{$name} if $_schemas->{$name};
 
-    my $options = $cfg->{$name} or die "The schema $name is not configured";
+    my $options = $cfg->{$name}
+        or croak("The schema $name is not configured");
+
     if ( my $alias = $options->{alias} ) {
         $options = $cfg->{$alias}
-            or die "The schema alias $alias does not exist in the config";
+            or croak("The schema alias $alias does not exist in the config");
         return $_schemas->{$alias} if $_schemas->{$alias};
     }
 
@@ -79,7 +80,7 @@ sub schema {
     if ( my $schema_class = $options->{schema_class} ) {
         $schema_class =~ s/-/::/g;
         eval { load $schema_class };
-        die "Could not load schema_class $schema_class: $@" if $@;
+        croak("Could not load schema_class $schema_class: $@") if $@;
         if ( my $replicated = $options->{replicated} ) {
             $schema = $schema_class->clone;
             my %storage_options;
@@ -97,21 +98,21 @@ sub schema {
     } else {
         my $dbic_loader = 'DBIx::Class::Schema::Loader';
         eval { load $dbic_loader };
-        die "You must provide a schema_class option or install $dbic_loader."
+        croak("You must provide a schema_class option or install $dbic_loader.")
             if $@;
         $dbic_loader->naming( $options->{schema_loader_naming} || 'v7' );
         $schema = DBIx::Class::Schema::Loader->connect(@conn_info);
     }
 
     return $_schemas->{$name} = $schema;
-};
+}
 
 sub resultset {
     my ($rset_name) = @_;
     return schema()->resultset($rset_name);
 }
 
-sub rset { goto &resultset };
+sub rset { goto &resultset }
 
 # ABSTRACT: Just some syntax sugar for DBIx::Class
 
