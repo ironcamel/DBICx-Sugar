@@ -44,10 +44,12 @@ sub add_schema_to_config {
 }
 
 sub schema {
-    my ($name) = @_;
+    my ( $name, $schema_cfg ) = @_;
+
     my $cfg = config();
 
     # We weren't asked for a specific name
+    # try to get one from the default config
     if (not defined $name) {
         my @names = keys %{$cfg}
             or croak("No schemas are configured");
@@ -56,17 +58,40 @@ sub schema {
         $name = @names == 1 ? $names[0] : 'default';
     }
 
-    return $_schemas->{$name} if $_schemas->{$name};
-
     my $options = $cfg->{$name}
         or croak("The schema $name is not configured");
 
+    # Schema specific configuration from the user
+    if ($schema_cfg) {
+        # Just return a new schema and do not save it
+        return _create_schema( $name, $schema_cfg );
+    }
+
+    # Return existing schemas, either by name
+    return $_schemas->{$name} if $_schemas->{$name};
+
+    # Or by alias
     if ( my $alias = $options->{alias} ) {
         $options = $cfg->{$alias}
             or croak("The schema alias $alias does not exist in the config");
         return $_schemas->{$alias} if $_schemas->{$alias};
     }
 
+    # Create schema
+    my $schema = _create_schema( $name, $options );
+
+    return $_schemas->{$name} = $schema;
+}
+
+sub resultset {
+    my ($rset_name) = @_;
+    return schema()->resultset($rset_name);
+}
+
+sub rset { goto &resultset }
+
+sub _create_schema {
+    my ( $name, $options ) = @_;
     my @conn_info = $options->{connect_info}
         ? @{$options->{connect_info}}
         : @$options{qw(dsn user password options)};
@@ -104,15 +129,8 @@ sub schema {
         $schema = DBIx::Class::Schema::Loader->connect(@conn_info);
     }
 
-    return $_schemas->{$name} = $schema;
+    return $schema;
 }
-
-sub resultset {
-    my ($rset_name) = @_;
-    return schema()->resultset($rset_name);
-}
-
-sub rset { goto &resultset }
 
 # ABSTRACT: Just some syntax sugar for DBIx::Class
 
