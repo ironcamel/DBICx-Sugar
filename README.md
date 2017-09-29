@@ -4,7 +4,7 @@ DBICx::Sugar - Just some syntax sugar for DBIx::Class
 
 # VERSION
 
-version 0.0100
+version 0.0200
 
 # SYNOPSIS
 
